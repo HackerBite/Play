@@ -164,6 +164,107 @@
         let enemiesLeft = 0;
         let shootCooldown = 0;
 
+        // Clases del juego
+        class Tank {
+            constructor(x, y, width, height, color) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+                this.color = color;
+                this.health = 100;
+                this.alive = true;
+            }
+
+            draw() {
+                if (this.alive) {
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }
+            }
+
+            move(dx, dy) {
+                this.x += dx;
+                this.y += dy;
+            }
+
+            rotate(angle) {
+                // Lógica de rotación
+            }
+
+            shoot() {
+                if (shootCooldown === 0) {
+                    projectiles.push(new Projectile(this.x + this.width / 2, this.y, 5, 'red'));
+                    shootCooldown = 20; // Tiempo de recarga
+                }
+            }
+
+            update() {
+                if (this.health <= 0) {
+                    this.alive = false;
+                }
+                this.draw();
+            }
+        }
+
+        class Enemy extends Tank {
+            constructor(x, y) {
+                super(x, y, 50, 50, 'green');
+                this.speed = 2;
+            }
+
+            // Comportamiento específico de los enemigos
+            update() {
+                super.update();
+                // Lógica de movimiento y disparo de enemigos
+            }
+        }
+
+        class Projectile {
+            constructor(x, y, speed, color) {
+                this.x = x;
+                this.y = y;
+                this.speed = speed;
+                this.color = color;
+                this.alive = true;
+            }
+
+            draw() {
+                if (this.alive) {
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(this.x, this.y, 5, 5);
+                }
+            }
+
+            update() {
+                this.y -= this.speed;
+                if (this.y < 0) {
+                    this.alive = false;
+                }
+                this.draw();
+            }
+        }
+
+        class Obstacle {
+            constructor(x, y, width, height) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+            }
+
+            draw() {
+                ctx.fillStyle = 'brown';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+        }
+
+        // Variables del juego
+        let player;
+        let enemies = [];
+        let projectiles = [];
+        let obstacles = [];
+
         // Funciones del juego
         function updateUI() {
             scoreEl.innerText = score;
@@ -183,6 +284,10 @@
             health = 2000;
             enemiesLeft = 0;
             shootCooldown = 0;
+            player = new Tank(canvas.width / 2 - 25, canvas.height - 60, 50, 50, 'blue');
+            enemies = [];
+            projectiles = [];
+            obstacles = [];
             updateUI();
             gameOverScreen.style.display = 'none';
             // Reiniciar lógica del juego...
@@ -196,7 +301,74 @@
             // Lógica para iniciar el siguiente nivel...
         }
 
-        // Lógica del juego...
+        function handleCollisions() {
+            // Colisiones entre proyectiles y enemigos
+            projectiles.forEach((proj, pIndex) => {
+                enemies.forEach((enemy, eIndex) => {
+                    if (proj.x < enemy.x + enemy.width &&
+                        proj.x + 5 > enemy.x &&
+                        proj.y < enemy.y + enemy.height &&
+                        proj.y + 5 > enemy.y) {
+                        // Colisión detectada
+                        enemy.health -= 10;
+                        proj.alive = false;
+                        if (enemy.health <= 0) {
+                            enemy.alive = false;
+                            score += 100;
+                            enemiesLeft--;
+                        }
+                    }
+                });
+            });
+
+            // Colisiones entre tanques y obstáculos
+            // (Lógica para manejar colisiones con obstáculos)
+        }
+
+        // Lógica del juego
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Actualizar y dibujar elementos del juego
+            player.update();
+            projectiles.forEach((proj, index) => {
+                proj.update();
+                if (!proj.alive) {
+                    projectiles.splice(index, 1);
+                }
+            });
+            enemies.forEach((enemy, index) => {
+                enemy.update();
+                if (!enemy.alive) {
+                    enemies.splice(index, 1);
+                }
+            });
+            obstacles.forEach(obstacle => {
+                obstacle.draw();
+            });
+
+            handleCollisions();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Inicialización
+        player = new Tank(canvas.width / 2 - 25, canvas.height - 60, 50, 50, 'blue');
+        for (let i = 0; i < 5; i++) {
+            enemies.push(new Enemy(Math.random() * canvas.width, Math.random() * canvas.height / 2));
+        }
+        obstacles.push(new Obstacle(200, 300, 100, 20));
+        updateUI();
+        gameLoop();
+
+        // Controles
+        btnUp.addEventListener('click', () => player.move(0, -5));
+        btnDown.addEventListener('click', () => player.move(0, 5));
+        btnLeft.addEventListener('click', () => player.move(-5, 0));
+        btnRight.addEventListener('click', () => player.move(5, 0));
+        btnShoot.addEventListener('click', () => player.shoot());
+
+        // --- AQUÍ TERMINA EL JUEGO COMPLETO ---
     </script>
 </body>
 </html>
