@@ -153,4 +153,50 @@
         const btnDown = document.getElementById('btnDown');
         const btnLeft = document.getElementById('btnLeft');
         const btnRight = document.getElementById('btnRight');
-        const btnTurretLeft = document.getElementById('btnT
+        const btnTurretLeft = document.getElementById('btnTurretLeft');
+        const btnTurretRight = document.getElementById('btnTurretRight');
+        const btnShoot = document.getElementById('btnShoot');
+
+        // Variables del juego
+        let score = 0;
+        let level = 1;
+        let health = 2000;
+        let enemiesLeft = 0;
+        let shootCooldown = 0;
+
+        // Funciones del juego
+        function updateUI() {
+            scoreEl.innerText = score;
+            levelEl.innerText = level;
+            healthEl.innerText = health;
+            enemiesLeftEl.innerText = enemiesLeft;
+        }
+
+        function gameOver() {
+            gameOverScreen.style.display = 'block';
+            finalScoreEl.innerText = score;
+        }
+
+        function restartGame() {
+            score = 0;
+            level = 1;
+            health = 2000;
+            enemiesLeft = 0;
+            shootCooldown = 0;
+            updateUI();
+            gameOverScreen.style.display = 'none';
+            // Reiniciar lógica del juego...
+        }
+
+        function nextLevel() {
+            level++;
+            enemiesLeft = level * 10; // Aumentar enemigos con el nivel
+            updateUI();
+            levelCompleteScreen.style.display = 'none';
+            // Lógica para iniciar el siguiente nivel...
+        }
+
+        // Lógica del juego...
+    </script>
+</body>
+</html>
