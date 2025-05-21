@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game Tests</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #testResults { border: 1px solid #ccc; padding: 10px; }
+        .test-suite { margin-bottom: 10px; }
+        .test-suite h3 { margin-top: 0; }
+        .test-case { margin-left: 20px; }
+        .pass { color: green; }
+        .fail { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Game Logic Tests</h1>
+    <div id="testResults">
+        <h2>Test Results:</h2>
+        <!-- Test results will be appended here by tests.js -->
+    </div>
+
+    <!-- Mock Game UI Elements (minimal needed for script.js to load without errors) -->
+    <div style="display: none;">
+        <span id="score">0</span>
+        <span id="level">1</span>
+        <span id="health">2000</span>
+        <span id="enemiesLeft">0</span>
+        <div id="gameOverScreen"></div>
+        <span id="finalScore">0</span>
+        <div id="levelCompleteScreen"></div>
+        <span id="levelScore">0</span>
+        <canvas id="gameCanvas"></canvas>
+
+        <button id="btnUp"></button>
+        <button id="btnDown"></button>
+        <button id="btnLeft"></button>
+        <button id="btnRight"></button>
+        <button id="btnTurretLeft"></button>
+        <button id="btnTurretRight"></button>
+        <button id="btnShoot"></button>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="tests.js"></script>
+    <script>
+        window.onload = function() {
+            // Ensure script.js has initialized its global variables if necessary,
+            // then run tests. Some parts of script.js run on load.
+            // For example, `player` is initialized globally.
+            // We might need to re-initialize or mock parts of script.js state
+            // specifically for tests in tests.js if there are conflicts.
+            runAllTests();
+        };
+    </script>
+</body>
+</html>
